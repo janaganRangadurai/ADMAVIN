@@ -8,41 +8,44 @@ import jakarta.persistence.Persistence;
 
 public class Main {
 	
-	public static Student createStudent(EntityManager em, String firstName, String lastName, Date dob, char gender) {
+	public static Student createStudent(EntityManager em, String firstName, String lastName, Date dob, char gender, Classes cls) {
         Student student = new Student();
         student.setFirstName(firstName);
         student.setLastName(lastName);
         student.setDob(dob);
         student.setGender(gender);
+        student.setClasses(cls);
         em.persist(student);
         return student;
     }
 	
-	public static Classes createClass(EntityManager em, String className, char section, Student student) {
+	public static Classes createClass(EntityManager em, String className, char section) {
         Classes cls = new Classes();
         cls.setClassName(className);
         cls.setSection(section);
-        cls.getStudent().add(student);
+//        cls.getStudent().add(student);
         em.persist(cls);
         return cls;
     }
 	
-	public static void createTeacher(EntityManager em, String teacherName, char gender, String phoneNo, Classes cls) {
+	public static void createTeacher(EntityManager em, String teacherName, char gender, String phoneNo, Classes cls, Subject sub) {
         Teacher teacher = new Teacher();
         teacher.setTeacherName(teacherName);
         teacher.setGender(gender);
         teacher.setPhoneNo(phoneNo);
         teacher.getClasses().add(cls);
+        teacher.getSubjects().add(sub);
+        cls.getTeachers().add(teacher);
+        sub.getTeachers().add(teacher);
         em.persist(teacher);
     }
 	
-	public static void createSubjects(EntityManager entityManager) {
-        String[] subjects = { "Mathmetics", "English", "Physics", "Chemistry", "Biology" };
-        for (String subjectName : subjects) {
+	public static Subject createSubjects(EntityManager entityManager, String subjectName) {
             Subject sub = new Subject();
             sub.setSubjectName(subjectName);
             entityManager.persist(sub);
-        }
+            return sub;
+        
     }
 	
 
@@ -54,16 +57,30 @@ public class Main {
         try {
             entityManager.getTransaction().begin();
 
-            Student student = createStudent(entityManager, "Janagan", "Rangadurai", Date.valueOf("2024-06-26"), 'M');
+            //Classes cls = createClass(entityManager, "Grade-10", 'A');
             
-            Classes cls = createClass(entityManager, "Grade-10", 'A', student);
+            //Student student = createStudent(entityManager, "Janagan", "Rangadurai", Date.valueOf("2024-06-26"), 'M',cls);
             
-            createTeacher(entityManager, "xyz", 'F', "+91 9876543210", cls);
+            //Student stu = createStudent(entityManager, "Harsha", "M", Date.valueOf("2024-12-30"), 'M', cls);
             
-            createSubjects(entityManager);
-
+            //cls.getStudent().add(student);
+            
+            //cls.getStudent().add(stu);
+            
+//            Subject sub = createSubjects(entityManager,"Mathmetics");
+            Subject eng = createSubjects(entityManager,"English");
+            Subject bio = createSubjects(entityManager,"Biology");
+            Subject phy = createSubjects(entityManager,"Physics");
+            Subject che = createSubjects(entityManager,"Chemistry");
+            Subject his = createSubjects(entityManager,"History");
+            Subject geo = createSubjects(entityManager,"Geography");
+            
+            
+            //createTeacher(entityManager, "xyz", 'F', "+91 9876543210", cls,sub);
+            
+            //createTeacher(entityManager, "abc", 'F', "+91 9876543000", cls,sub);
+            
             entityManager.getTransaction().commit();
-            
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

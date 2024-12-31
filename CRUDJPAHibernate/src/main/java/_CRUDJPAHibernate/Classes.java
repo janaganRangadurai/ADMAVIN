@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 
@@ -29,7 +31,9 @@ public class Classes {
 	@OneToMany(mappedBy = "classes")
 	private List<Student> student = new ArrayList<Student>();
 	
+
 	@ManyToMany
+	@JoinTable(name = "Class_Teacher",joinColumns = @JoinColumn(name = "C_ID"),inverseJoinColumns = @JoinColumn(name = "T_ID"))
 	private List<Teacher> teachers = new ArrayList<Teacher>();
 
 	public int getId() {
@@ -52,10 +56,6 @@ public class Classes {
 		return section;
 	}
 
-	public void setSection(char section) {
-		this.section = section;
-	}
-
 	public List<Student> getStudent() {
 		return student;
 	}
@@ -63,6 +63,11 @@ public class Classes {
 	public void setStudent(List<Student> student) {
 		this.student = student;
 	}
+
+	public void setSection(char section) {
+		this.section = section;
+	}
+	
 
 	public List<Teacher> getTeachers() {
 		return teachers;
